@@ -156,6 +156,16 @@
             transform: scale(1.02);
         }
 
+        .time-slot.one-left {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .time-slot.one-left:hover {
+            background: #fde68a;
+            transform: scale(1.02);
+        }
+
         .time-slot.booked {
             background: #fee2e2;
             color: #991b1b;
@@ -396,6 +406,10 @@
                     <span>Available</span>
                 </div>
                 <div class="legend-item">
+                    <div class="legend-color" style="background: #fef3c7;"></div>
+                    <span>1 Slot Left</span>
+                </div>
+                <div class="legend-item">
                     <div class="legend-color" style="background: #fee2e2;"></div>
                     <span>Booked</span>
                 </div>
@@ -561,16 +575,17 @@
                 for (let day = 0; day < 5; day++) {
                     const date = new Date(currentWeekStart);
                     date.setDate(date.getDate() + day);
-                    const dateStr = date.toISOString().split('T')[0];
+                    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                     
-                    const slotStatus = getSlotStatus(dateStr, time);
-                    const className = `time-slot ${slotStatus}`;
-                    
-                    if (slotStatus === 'available') {
-                        html += `<div class="${className}" onclick='openBookingModal("${dateStr}", "${time}")'>Available</div>`;
-                    } else if (slotStatus === 'booked') {
+                    const { status, spotsLeft } = getSlotInfo(dateStr, time);
+                    const className = `time-slot ${status}${status === 'available' && spotsLeft === 1 ? ' one-left' : ''}`;
+
+                    if (status === 'available') {
+                        const label = spotsLeft === 1 ? '1 slot left' : 'Available';
+                        html += `<div class="${className}" onclick='openBookingModal("${dateStr}", "${time}")'>${label}</div>`;
+                    } else if (status === 'booked') {
                         html += `<div class="${className}">Booked</div>`;
-                    } else if (slotStatus === 'blocked') {
+                    } else if (status === 'blocked') {
                         html += `<div class="${className}">Blocked</div>`;
                     } else {
                         html += `<div class="${className}">Past</div>`;
@@ -590,8 +605,32 @@
             return slots;
         }
 
+        function getSlotInfo(date, time) {
+            const [y, m, d] = date.split('-').map(Number);
+            const [hh, mm] = time.split(':').map(Number);
+            const slotDateTime = new Date(y, m - 1, d, hh, mm, 0);
+            const now = new Date();
+            const twoHoursFromNow = new Date(now.getTime() + (ADVANCE_BOOKING_HOURS * 60 * 60 * 1000));
+
+            if (slotDateTime < twoHoursFromNow) return { status: 'past', spotsLeft: 0 };
+
+            const isBlocked = blockedSlots.some(slot => slot.date === date && slot.time === time);
+            if (isBlocked) return { status: 'blocked', spotsLeft: 0 };
+
+            const slotBookings = bookings.filter(b => b.date === date && b.time === time);
+            const hasLargeDelivery = slotBookings.some(b => parseInt(b.pallets, 10) > 6);
+            if (hasLargeDelivery) return { status: 'booked', spotsLeft: 0 };
+
+            const spotsLeft = 2 - slotBookings.length;
+            if (spotsLeft <= 0) return { status: 'booked', spotsLeft: 0 };
+
+            return { status: 'available', spotsLeft };
+        }
+
         function getSlotStatus(date, time) {
-            const slotDateTime = new Date(`${date}T${time}:00`);
+            const [y, m, d] = date.split('-').map(Number);
+            const [hh, mm] = time.split(':').map(Number);
+            const slotDateTime = new Date(y, m - 1, d, hh, mm, 0);
             const now = new Date();
             const twoHoursFromNow = new Date(now.getTime() + (ADVANCE_BOOKING_HOURS * 60 * 60 * 1000));
 
@@ -616,9 +655,13 @@
         }
 
         function openBookingModal(date, time) {
+            const { status } = getSlotInfo(date, time);
+            if (status !== 'available') return; // slot filled since last render
+
             selectedSlot = { date, time };
             
-            const dateObj = new Date(date);
+            const [year, month, day] = date.split('-').map(Number);
+            const dateObj = new Date(year, month - 1, day);
             const formattedDate = dateObj.toLocaleDateString('en-GB', { 
                 weekday: 'long', 
                 day: 'numeric', 
@@ -703,3 +746,4 @@
     </script>
 </body>
 </html>
+
