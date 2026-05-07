@@ -1,695 +1,1996 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chuanglee Warehouse - Delivery Booking</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warehouse Booking — Chuanglee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&family=Noto+Serif+TC:wght@400;700&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   CHUANGLEE — Design System (matches original chuanglee-website.html exactly)
+   ============================================================ */
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+:root {
+  --paper: #f4ede1;
+  --paper-2: #ebe2d2;
+  --ink: #15212f;
+  --ink-soft: #2a3849;
+  --vermillion: #c0362c;
+  --vermillion-deep: #8a2620;
+  --gold: #c89b3c;
+  --jade: #2f4a3a;
+  --rule: rgba(21, 33, 47, 0.18);
+  --shadow: 0 30px 60px -30px rgba(21, 33, 47, 0.35);
+  --display: "Fraunces", "Times New Roman", serif;
+  --body: "Instrument Sans", -apple-system, sans-serif;
+  --cjk: "Noto Serif TC", serif;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
+body {
+  font-family: var(--body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(rgba(21,33,47,0.025) 1px, transparent 1px),
+    radial-gradient(rgba(192,54,44,0.018) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+}
 
-        h1 {
-            color: #1f2937;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+::selection { background: var(--vermillion); color: var(--paper); }
 
-        .subtitle {
-            color: #6c757d;
-            font-size: 16px;
-        }
+/* ---------- Top Bar ---------- */
+.topbar {
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 0;
+  overflow: hidden;
+}
+.marquee {
+  display: flex;
+  gap: 60px;
+  white-space: nowrap;
+  animation: scroll 45s linear infinite;
+  width: max-content;
+}
+.marquee span { display: inline-flex; align-items: center; gap: 14px; }
+.marquee .dot { width: 4px; height: 4px; background: var(--vermillion); border-radius: 50%; }
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 
-        .info-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+/* ---------- Nav ---------- */
+nav.main {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(244, 237, 225, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 18px 48px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.brand img {
+  height: 44px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+.brand .est { display: none; }
+.brand-name {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.brand-name span {
+  display: block;
+  font-family: var(--body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 600;
+  margin-top: 2px;
+}
+.foot-brand .brand-name {
+  color: var(--paper);
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--vermillion);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
+.nav-links a.active { color: var(--vermillion); }
+.nav-cta {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+}
+.nav-cta .phone { color: var(--ink-soft); }
+.nav-cta .order-btn {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: all 0.25s;
+}
+.nav-cta .order-btn:hover {
+  background: var(--vermillion);
+  transform: translateY(-1px);
+}
 
-        .info-box strong {
-            color: #856404;
-        }
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: var(--vermillion);
+  color: var(--paper);
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.25s;
+  box-shadow: 0 8px 24px -8px rgba(192,54,44,0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+.btn-primary:hover {
+  background: var(--vermillion-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -8px rgba(192,54,44,0.6);
+}
+.btn-ghost {
+  border: 1px solid var(--ink);
+  padding: 15px 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+}
+.btn-ghost:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-ghost .arrow { transition: transform 0.25s; }
+.btn-ghost:hover .arrow { transform: translateX(4px); }
 
-        .calendar-wrapper {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
+/* ---------- Typography helpers ---------- */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::before {
+  content: '§';
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 16px;
+}
+.eyebrow.center { justify-content: center; }
+.eyebrow.gold { color: var(--gold); }
+.eyebrow.gold::before { color: var(--gold); }
+.eyebrow.paper { color: var(--paper); }
+.eyebrow.paper::before { color: var(--paper); }
 
-        .week-selector {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+h1.headline {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(56px, 9vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+h1.headline .ital { font-style: italic; font-weight: 300; color: var(--vermillion); }
+h1.headline .cjk {
+  font-family: var(--cjk);
+  font-weight: 400;
+  font-size: 0.55em;
+  color: var(--ink-soft);
+  margin-left: 0.15em;
+  letter-spacing: 0;
+}
 
-        .week-selector h2 {
-            color: #1f2937;
-            font-size: 24px;
-        }
+h2.title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(44px, 6vw, 84px);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  max-width: 16ch;
+}
+h2.title em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+h2.title.center { margin: 0 auto; text-align: center; }
 
-        .week-nav {
-            display: flex;
-            gap: 10px;
-        }
+section.editorial {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 120px 48px;
+}
 
-        .nav-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
+/* ---------- Stats Strip ---------- */
+.stats {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 60px 48px;
+  margin: 80px 0 0;
+}
+.stats-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+.stat {
+  border-left: 1px solid rgba(244,237,225,0.18);
+  padding-left: 24px;
+}
+.stat-num {
+  font-family: var(--display);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--paper);
+}
+.stat-num .accent { color: var(--vermillion); font-style: italic; }
+.stat-label {
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244,237,225,0.7);
+}
 
-        .nav-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
+/* ---------- Story ---------- */
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 80px;
+  align-items: start;
+}
+.story-text p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+  max-width: 52ch;
+}
+.story-text p.lead {
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1.35;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: 36px;
+}
+.story-text p.lead em { color: var(--vermillion); font-style: italic; }
+.pull-quote {
+  margin-top: 48px;
+  padding: 28px 0 28px 32px;
+  border-left: 3px solid var(--vermillion);
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.pull-quote cite {
+  display: block;
+  margin-top: 16px;
+  font-style: normal;
+  font-family: var(--body);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.story-visual { position: relative; aspect-ratio: 4 / 5; }
+.story-visual .img-1 {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  border-radius: 4px;
+}
+.story-visual .img-2 {
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 60%; aspect-ratio: 1;
+  background-size: cover; background-position: center;
+  border-radius: 4px;
+  border: 8px solid var(--paper);
+  box-shadow: var(--shadow);
+}
+.story-visual .tag {
+  position: absolute; top: 24px; left: -16px;
+  background: var(--vermillion); color: var(--paper);
+  padding: 8px 18px;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;
+  transform: rotate(-3deg);
+}
 
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
+/* ---------- Capabilities ---------- */
+.capabilities { background: var(--paper-2); padding: 120px 48px; }
+.cap-inner { max-width: 1440px; margin: 0 auto; }
+.cap-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  align-items: end; margin-bottom: 80px;
+}
+.cap-head p { font-size: 17px; line-height: 1.7; color: var(--ink-soft); max-width: 50ch; }
+.cap-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+.cap-card {
+  background: var(--paper); border: 1px solid var(--rule);
+  padding: 36px 32px; border-radius: 4px;
+  position: relative; transition: all 0.4s ease; overflow: hidden;
+}
+.cap-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--vermillion); }
+.cap-card .num { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 14px; color: var(--vermillion); letter-spacing: 0.05em; }
+.cap-card h3 { font-family: var(--display); font-weight: 500; font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; margin: 14px 0 16px; max-width: 14ch; }
+.cap-card p { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.cap-card .icon {
+  margin-top: 28px; width: 36px; height: 36px;
+  border: 1px solid var(--ink); border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--display); font-style: italic;
+  transition: all 0.3s;
+}
+.cap-card:hover .icon { background: var(--vermillion); border-color: var(--vermillion); color: var(--paper); }
+.cap-1 { grid-column: span 5; min-height: 320px; }
+.cap-2 { grid-column: span 4; min-height: 320px; }
+.cap-3 { grid-column: span 3; min-height: 320px; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.cap-3 h3 { color: var(--paper); }
+.cap-3 p { color: rgba(244,237,225,0.7); }
+.cap-3 .icon { border-color: var(--paper); color: var(--paper); }
+.cap-4 { grid-column: span 4; min-height: 320px; background: var(--vermillion); color: var(--paper); border-color: var(--vermillion); }
+.cap-4 h3, .cap-4 .num { color: var(--paper); }
+.cap-4 p { color: rgba(244,237,225,0.85); }
+.cap-4 .icon { border-color: var(--paper); color: var(--paper); }
+.cap-5 { grid-column: span 8; min-height: 320px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+.cap-5 .text-side { display: flex; flex-direction: column; height: 100%; }
+.cap-5 .img-side {
+  width: 280px; align-self: stretch;
+  background-size: cover; background-position: center;
+  border-radius: 4px; margin: -36px -32px -36px 0;
+}
 
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: 80px repeat(5, 1fr);
-            gap: 1px;
-            background: #e5e7eb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+/* ---------- Ecosystem ---------- */
+.ecosystem { padding: 120px 48px; max-width: 1440px; margin: 0 auto; }
+.eco-head { text-align: center; max-width: 700px; margin: 0 auto 80px; }
+.eco-head .eyebrow { justify-content: center; }
+.eco-head h2 { margin: 0 auto; }
+.eco-flow {
+  position: relative;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+}
+.eco-flow::before {
+  content: '';
+  position: absolute; top: 50%; left: 5%; right: 5%; height: 1px;
+  background: repeating-linear-gradient(90deg, var(--vermillion) 0 6px, transparent 6px 12px);
+  z-index: 0;
+}
+.eco-node {
+  position: relative; z-index: 1;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 28px 22px; text-align: center; transition: all 0.3s;
+}
+.eco-node:hover { background: var(--ink); color: var(--paper); transform: translateY(-6px); border-color: var(--ink); }
+.eco-node:hover p { color: inherit; }
+.eco-node .step {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--vermillion); color: var(--paper);
+  margin: 0 auto 16px; display: grid; place-items: center;
+  font-family: var(--display); font-weight: 500; font-size: 16px;
+}
+.eco-node h4 { font-family: var(--display); font-weight: 500; font-size: 17px; line-height: 1.2; margin-bottom: 10px; letter-spacing: -0.01em; }
+.eco-node p { font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
 
-        .time-label {
-            background: #f3f4f6;
-            padding: 15px 10px;
-            text-align: center;
-            font-weight: 600;
-            color: #4b5563;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* ---------- Farm ---------- */
+.farm {
+  background: var(--ink); color: var(--paper);
+  padding: 140px 48px; position: relative; overflow: hidden;
+}
+.farm-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+.farm .eyebrow { color: var(--gold); }
+.farm .eyebrow::before { color: var(--gold); }
+.farm h2.title { color: var(--paper); }
+.farm h2.title em { color: var(--gold); }
+.farm-text p { font-size: 17px; line-height: 1.7; color: rgba(244,237,225,0.78); margin: 28px 0; max-width: 50ch; }
+.farm-list { list-style: none; margin-top: 36px; display: grid; gap: 14px; }
+.farm-list li { display: flex; align-items: baseline; gap: 16px; font-size: 15px; padding: 14px 0; border-bottom: 1px solid rgba(244,237,225,0.12); }
+.farm-list li::before { content: '➜'; color: var(--gold); font-size: 12px; }
+.farm-list strong { font-family: var(--display); font-weight: 500; margin-right: 6px; }
+.farm-visual { position: relative; aspect-ratio: 1.1; }
+.farm-img-main {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  border-radius: 4px;
+}
+.farm-grid-mini {
+  position: absolute; bottom: -40px; right: -40px;
+  background: var(--paper); color: var(--ink);
+  padding: 22px; border-radius: 4px;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.4);
+  display: grid; grid-template-columns: repeat(4, 70px); gap: 10px;
+}
+.farm-grid-mini .specimen { text-align: center; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.farm-grid-mini .specimen .swatch { width: 60px; height: 60px; border-radius: 4px; margin: 0 auto 6px; }
+.specimen .s1 { background: linear-gradient(135deg, #4a6a3a 0%, #2d4521 100%); }
+.specimen .s2 { background: linear-gradient(135deg, #8aab4a 0%, #5d7a2a 100%); }
+.specimen .s3 { background: linear-gradient(135deg, #6b8c45 0%, #3d5a25 100%); }
+.specimen .s4 { background: linear-gradient(135deg, #b5c87b 0%, #7d9648 100%); }
+.specimen .s5 { background: linear-gradient(135deg, #a8c25a 0%, #6e8a35 100%); }
+.specimen .s6 { background: linear-gradient(135deg, #d4a84e 0%, #a07a25 100%); }
+.specimen .s7 { background: linear-gradient(135deg, #e89a55 0%, #b86a25 100%); }
+.specimen .s8 { background: linear-gradient(135deg, #97b558 0%, #647c30 100%); }
+.farm-quote {
+  grid-column: span 2; margin-top: 90px; text-align: center;
+  font-family: var(--display); font-style: italic; font-weight: 300;
+  font-size: clamp(28px, 4vw, 48px); line-height: 1.3;
+  color: rgba(244,237,225,0.95); max-width: 24ch; margin-left: auto; margin-right: auto;
+}
+.farm-quote .cjk-char { color: var(--vermillion); font-family: var(--cjk); font-style: normal; }
 
-        .day-header {
-            background: #667eea;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 14px;
-        }
+/* ---------- Customers ---------- */
+.customers { padding: 120px 48px; max-width: 1440px; margin: 0 auto; }
+.cust-head { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end; margin-bottom: 80px; }
+.cust-channels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.cust-channel {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 32px 28px; transition: all 0.3s;
+}
+.cust-channel:hover { border-color: var(--vermillion); transform: translateY(-4px); box-shadow: var(--shadow); }
+.cust-channel .ch-num { font-family: var(--display); font-style: italic; color: var(--vermillion); font-size: 13px; }
+.cust-channel h4 { font-family: var(--display); font-weight: 500; font-size: 22px; margin: 12px 0 8px; letter-spacing: -0.01em; }
+.cust-channel p.cnt { font-size: 12px; color: var(--ink-soft); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
+.cust-list { list-style: none; border-top: 1px solid var(--rule); }
+.cust-list li { padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+.cust-list li::after { content: '↗'; color: var(--ink-soft); opacity: 0; transition: all 0.2s; }
+.cust-list li:hover::after { opacity: 1; transform: translateX(2px); }
+.cust-list .ftd { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vermillion); }
 
-        .time-slot {
-            background: white;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-        }
+/* ---------- Brand Wall ---------- */
+.brand-wall { background: var(--ink); color: var(--paper); padding: 100px 48px; overflow: hidden; }
+.brand-wall-head { max-width: 1440px; margin: 0 auto 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end; }
+.brand-wall h2.title { color: var(--paper); }
+.brand-wall h2.title em { color: var(--gold); }
+.brand-wall .eyebrow { color: var(--gold); }
+.brand-wall .eyebrow::before { color: var(--gold); }
+.brand-wall p { font-size: 16px; line-height: 1.7; color: rgba(244,237,225,0.7); max-width: 50ch; }
+.brand-rows { display: grid; gap: 16px; }
+.brand-row {
+  display: flex; gap: 50px; white-space: nowrap;
+  animation: scroll-x 60s linear infinite; width: max-content;
+}
+.brand-row.reverse { animation: scroll-x-rev 60s linear infinite; }
+.brand-row span {
+  font-family: var(--display); font-size: 38px; font-weight: 500;
+  color: var(--paper); letter-spacing: -0.02em;
+  display: inline-flex; align-items: center; gap: 50px;
+}
+.brand-row span em { color: var(--gold); font-style: italic; font-weight: 300; }
+.brand-row span::after { content: '✦'; color: var(--vermillion); font-size: 18px; }
+@keyframes scroll-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes scroll-x-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 
-        .time-slot.available {
-            background: #d1fae5;
-            color: #065f46;
-        }
+/* ---------- Heritage Timeline ---------- */
+.heritage { padding: 140px 48px; max-width: 1440px; margin: 0 auto; }
+.heritage-head { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+.heritage-head p { font-size: 17px; line-height: 1.7; color: var(--ink-soft); max-width: 48ch; }
+.timeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; border-top: 2px solid var(--ink); }
+.tl-item { padding: 32px 24px 32px 0; position: relative; border-right: 1px solid var(--rule); }
+.tl-item:last-child { border-right: none; }
+.tl-item::before {
+  content: ''; position: absolute; top: -7px; left: 0;
+  width: 12px; height: 12px; background: var(--vermillion);
+  border-radius: 50%; border: 2px solid var(--paper);
+}
+.tl-year { font-family: var(--display); font-weight: 500; font-size: 32px; letter-spacing: -0.02em; color: var(--vermillion); }
+.tl-event { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
 
-        .time-slot.available:hover {
-            background: #a7f3d0;
-            transform: scale(1.02);
-        }
+/* ---------- App Section ---------- */
+.app-section { background: var(--vermillion); color: var(--paper); padding: 100px 48px; overflow: hidden; position: relative; }
+.app-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.app-section .eyebrow { color: var(--paper); }
+.app-section .eyebrow::before { color: var(--paper); }
+.app-section h2.title { color: var(--paper); }
+.app-section h2.title em { color: var(--ink); font-style: italic; }
+.app-section p { margin-top: 24px; font-size: 16px; line-height: 1.7; color: rgba(244,237,225,0.92); max-width: 46ch; }
+.app-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 36px; }
+.app-features div { padding: 18px 0; border-top: 1px solid rgba(244,237,225,0.3); font-size: 14px; display: flex; gap: 10px; align-items: baseline; }
+.app-features div span { font-family: var(--display); font-weight: 500; color: var(--ink); }
+.app-buttons { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+.app-btn {
+  background: var(--ink); color: var(--paper);
+  padding: 14px 24px; border-radius: 8px; font-size: 13px;
+  display: flex; align-items: center; gap: 12px; transition: all 0.25s;
+}
+.app-btn:hover { background: var(--paper); color: var(--ink); }
+.app-btn small { display: block; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7; }
+.app-btn strong { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.phone-mockup { position: relative; aspect-ratio: 9/16; max-width: 300px; margin: 0 auto; transform: rotate(-4deg); }
+.phone-frame { width: 100%; height: 100%; background: var(--ink); border-radius: 36px; padding: 14px; box-shadow: 0 40px 80px -20px rgba(0,0,0,0.5); }
+.phone-screen { width: 100%; height: 100%; background: var(--paper); border-radius: 24px; overflow: hidden; position: relative; }
+.phone-screen::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 80px; height: 18px; background: var(--ink); border-radius: 999px; z-index: 2; }
+.phone-content { padding: 50px 18px 18px; height: 100%; display: flex; flex-direction: column; gap: 12px; }
+.ph-greet { font-family: var(--display); font-size: 18px; line-height: 1.1; }
+.ph-greet em { color: var(--vermillion); font-style: italic; }
+.ph-search { background: var(--paper-2); padding: 10px 14px; border-radius: 999px; font-size: 11px; color: var(--ink-soft); }
+.ph-cards { display: grid; gap: 8px; }
+.ph-card { background: var(--paper-2); padding: 12px; border-radius: 12px; display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; }
+.ph-card .ph-img { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--vermillion), var(--gold)); }
+.ph-card .ph-title { font-size: 10px; font-weight: 600; }
+.ph-card .ph-meta { font-size: 8px; color: var(--ink-soft); }
+.ph-card .ph-add { width: 22px; height: 22px; background: var(--ink); color: var(--paper); border-radius: 50%; display: grid; place-items: center; font-size: 11px; }
+.app-section::after { content: '次世代'; position: absolute; bottom: -40px; right: -20px; font-family: var(--cjk); font-size: 240px; color: rgba(21,33,47,0.06); letter-spacing: 0.05em; pointer-events: none; }
 
-        .time-slot.one-left {
-            background: #fef3c7;
-            color: #92400e;
-        }
+/* ---------- Contact ---------- */
+.contact { background: var(--paper-2); padding: 140px 48px; }
+.contact-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 100px; align-items: start; }
+.contact h2.title { font-size: clamp(48px, 6.5vw, 92px); }
+.contact .lead { font-size: 18px; line-height: 1.6; margin-top: 28px; color: var(--ink-soft); max-width: 44ch; }
+.contact-meta { margin-top: 60px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+.contact-meta .item { border-top: 1px solid var(--ink); padding-top: 16px; }
+.contact-meta .label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--vermillion); margin-bottom: 10px; }
+.contact-meta .value { font-family: var(--display); font-size: 22px; line-height: 1.3; letter-spacing: -0.01em; }
+.contact-form { background: var(--paper); padding: 48px; border-radius: 4px; box-shadow: var(--shadow); }
+.contact-form h3 { font-family: var(--display); font-size: 28px; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.02em; }
+.contact-form .sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 28px; }
+.form-row { margin-bottom: 18px; }
+.form-row label { display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 6px; }
+.form-row input, .form-row select, .form-row textarea {
+  width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--rule);
+  background: transparent; font-family: var(--body); font-size: 15px; color: var(--ink);
+  transition: border-color 0.2s; outline: none;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-bottom-color: var(--vermillion); }
+.form-row textarea { resize: vertical; min-height: 80px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-submit {
+  margin-top: 12px; width: 100%; background: var(--ink); color: var(--paper);
+  padding: 18px; border-radius: 999px; font-size: 13px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.25s;
+}
+.form-submit:hover { background: var(--vermillion); }
 
-        .time-slot.one-left:hover {
-            background: #fde68a;
-            transform: scale(1.02);
-        }
+/* ---------- Footer ---------- */
+footer { background: var(--ink); color: var(--paper); padding: 80px 48px 36px; }
+.foot-inner { max-width: 1440px; margin: 0 auto; }
+.foot-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 60px; border-bottom: 1px solid rgba(244,237,225,0.2); }
+.foot-brand .brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  text-decoration: none;
+  flex-direction: row;
+}
+.foot-brand .brand img {
+  height: 52px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
+.foot-brand .brand-name {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--paper);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.foot-brand .brand-name span {
+  display: block;
+  font-family: var(--body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  font-weight: 600;
+  margin-top: 3px;
+}
+.foot-brand .brand .est { color: var(--vermillion); }
+.foot-brand p { font-size: 14px; line-height: 1.6; color: rgba(244,237,225,0.7); max-width: 36ch; }
+.foot-col h5 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; font-weight: 600; }
+.foot-col ul { list-style: none; display: grid; gap: 10px; }
+.foot-col a { font-size: 14px; color: rgba(244,237,225,0.85); transition: color 0.2s; }
+.foot-col a:hover { color: var(--paper); }
+.foot-bottom { margin-top: 30px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; font-size: 12px; color: rgba(244,237,225,0.5); }
+.foot-bottom .center { font-family: var(--cjk); font-size: 16px; color: var(--vermillion); letter-spacing: 0.3em; }
+.foot-bottom .right { text-align: right; }
+.foot-bottom .right a { margin-left: 16px; color: rgba(244,237,225,0.6); }
+.foot-bottom .right a:hover { color: var(--paper); }
 
-        .time-slot.booked {
-            background: #fee2e2;
-            color: #991b1b;
-            cursor: not-allowed;
-        }
+/* ---------- Reveal animation ---------- */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
 
-        .time-slot.blocked {
-            background: #f3f4f6;
-            color: #9ca3af;
-            cursor: not-allowed;
-        }
+/* =============================================================
+   CATALOGUE PAGE — new styles, same design language
+   ============================================================= */
 
-        .time-slot.past {
-            background: #f9fafb;
-            color: #d1d5db;
-            cursor: not-allowed;
-        }
+/* Sticky filter bar */
+.cat-toolbar {
+  position: sticky; top: 73px; z-index: 50;
+  background: rgba(244,237,225,0.95);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+  padding: 0;
+}
+.cat-toolbar-inner {
+  max-width: 1440px; margin: 0 auto;
+  padding: 16px 48px;
+  display: flex; align-items: center; gap: 24px;
+}
+.cat-pills { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.cat-pills::-webkit-scrollbar { display: none; }
+.cat-pill {
+  padding: 9px 18px; border-radius: 999px; font-size: 13px; font-weight: 500;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  white-space: nowrap; transition: all 0.2s; cursor: pointer; font-family: inherit;
+}
+.cat-pill:hover { border-color: var(--ink); }
+.cat-pill.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.cat-search {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--paper-2); padding: 9px 16px; border-radius: 999px;
+  border: 1px solid transparent; transition: border-color 0.2s; min-width: 260px;
+}
+.cat-search:focus-within { border-color: var(--vermillion); }
+.cat-search input { border: none; background: transparent; outline: none; font-family: inherit; font-size: 14px; color: var(--ink); width: 100%; }
+.cat-search input::placeholder { color: var(--ink-soft); opacity: 0.6; }
 
-        .legend {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+/* Category mosaic hero */
+.cat-mosaic {
+  max-width: 1440px; margin: 0 auto; padding: 60px 48px 0;
+  display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px;
+}
+.cat-tile {
+  position: relative; border-radius: 4px; overflow: hidden; cursor: pointer;
+  background: var(--ink); transition: transform 0.4s ease;
+}
+.cat-tile:hover { transform: translateY(-5px); }
+.cat-tile .ct-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.6s ease; }
+.cat-tile:hover .ct-bg { transform: scale(1.05); }
+.cat-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(21,33,47,0.88) 0%, rgba(21,33,47,0.1) 60%); }
+.cat-tile .ct-label { position: absolute; bottom: 22px; left: 22px; right: 22px; z-index: 2; color: var(--paper); }
+.cat-tile .ct-num { font-family: var(--display); font-style: italic; font-size: 12px; color: var(--gold); margin-bottom: 6px; }
+.cat-tile h3 { font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1; letter-spacing: -0.02em; margin-bottom: 6px; }
+.cat-tile h3 em { font-style: italic; color: var(--gold); font-weight: 300; }
+.cat-tile .ct-sub { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(244,237,225,0.75); }
+.ct-lg { grid-column: span 7; aspect-ratio: 16/9; }
+.ct-md { grid-column: span 5; aspect-ratio: 16/11; }
+.ct-sm { grid-column: span 4; aspect-ratio: 4/5; }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
+/* Product section */
+.prod-section { max-width: 1440px; margin: 0 auto; padding: 80px 48px 40px; }
+.prod-section-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; margin-bottom: 48px; }
+.prod-section-head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.5vw, 56px); line-height: 1; letter-spacing: -0.025em; }
+.prod-section-head h2 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+.see-all { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+.see-all:hover { color: var(--vermillion); border-color: var(--vermillion); }
+.prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-        }
+/* Product card */
+.prod-card {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px;
+  overflow: hidden; transition: all 0.3s; display: flex; flex-direction: column;
+}
+.prod-card:hover { border-color: var(--vermillion); transform: translateY(-4px); box-shadow: 0 20px 40px -20px rgba(21,33,47,0.3); }
+.pc-img { aspect-ratio: 1; position: relative; overflow: hidden; }
+.pc-img .pc-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.5s; }
+.prod-card:hover .pc-bg { transform: scale(1.04); }
+.pc-tag {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  background: var(--vermillion); color: var(--paper);
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px; font-weight: 600;
+}
+.pc-tag.gold { background: var(--gold); color: var(--ink); }
+.pc-tag.ink { background: var(--ink); }
+.pc-body { padding: 20px 20px 22px; flex: 1; display: flex; flex-direction: column; }
+.pc-brand { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--vermillion); font-weight: 600; margin-bottom: 5px; }
+.pc-body h4 { font-family: var(--display); font-weight: 500; font-size: 18px; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 8px; }
+.pc-desc { font-size: 12px; line-height: 1.5; color: var(--ink-soft); flex: 1; margin-bottom: 14px; }
+.pc-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--rule); padding-top: 12px; margin-top: auto; }
+.pc-pack { font-size: 12px; color: var(--ink-soft); font-weight: 500; }
+.pc-cta { width: 30px; height: 30px; background: var(--ink); color: var(--paper); border-radius: 50%; display: grid; place-items: center; font-size: 13px; transition: all 0.25s; }
+.prod-card:hover .pc-cta { background: var(--vermillion); transform: rotate(45deg); }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
+/* Promo banners (same pattern as original sections) */
+.promo-band {
+  background: var(--ink); color: var(--paper); padding: 80px 48px; position: relative; overflow: hidden;
+}
+.promo-band.vermillion { background: var(--vermillion); }
+.promo-band.gold { background: var(--gold); color: var(--ink); }
+.promo-band.paper-2 { background: var(--paper-2); color: var(--ink); }
+.promo-band-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+.promo-text .promo-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid currentColor; padding: 6px 14px; border-radius: 999px;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; opacity: 0.8;
+}
+.promo-text h3 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 4vw, 52px); line-height: 1; letter-spacing: -0.02em; margin-bottom: 16px; }
+.promo-text h3 em { font-style: italic; }
+.promo-band:not(.gold):not(.paper-2) .promo-text h3 em { color: var(--gold); }
+.promo-band.gold .promo-text h3 em,
+.promo-band.paper-2 .promo-text h3 em { color: var(--vermillion); }
+.promo-text p { font-size: 15px; line-height: 1.65; opacity: 0.85; max-width: 50ch; margin-bottom: 28px; }
+.promo-visual { aspect-ratio: 4/3; border-radius: 4px; overflow: hidden; position: relative; box-shadow: var(--shadow); }
+.promo-visual .pv-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.promo-visual .stamp {
+  position: absolute; top: -14px; right: -14px; z-index: 2;
+  width: 96px; height: 96px; border-radius: 50%;
+  background: var(--gold); color: var(--ink);
+  display: grid; place-items: center; text-align: center;
+  font-family: var(--display); font-size: 12px; font-weight: 600; line-height: 1.2;
+  letter-spacing: 0.04em; text-transform: uppercase; transform: rotate(-7deg);
+}
+.promo-band.vermillion::after { content: '促'; position: absolute; bottom: -60px; right: -20px; font-family: var(--cjk); font-size: 320px; color: rgba(244,237,225,0.07); pointer-events: none; font-weight: 700; }
+.promo-band .btn-primary { font-size: 13px; }
+.promo-band.vermillion .btn-primary { background: var(--ink); box-shadow: none; }
+.promo-band.vermillion .btn-primary:hover { background: var(--paper); color: var(--ink); }
+.promo-band.gold .btn-primary { background: var(--ink); color: var(--paper); box-shadow: none; }
+.promo-band.gold .btn-primary:hover { background: var(--paper); color: var(--ink); }
 
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* Brand strip scrolling row */
+.brand-strip {
+  background: var(--paper-2); padding: 48px; overflow: hidden;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.brand-strip-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: center; }
+.brand-strip h4 { font-family: var(--display); font-weight: 500; font-size: 20px; line-height: 1.2; max-width: 10ch; }
+.brand-strip h4 em { font-style: italic; color: var(--vermillion); }
+.bs-scroll { overflow: hidden; position: relative; }
+.bs-row { display: flex; gap: 48px; animation: scroll-x 40s linear infinite; width: max-content; }
+.bs-row span { font-family: var(--display); font-size: 22px; font-weight: 500; color: var(--ink-soft); white-space: nowrap; display: inline-flex; align-items: center; gap: 48px; }
+.bs-row span::after { content: '·'; color: var(--vermillion); font-size: 24px; }
 
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease-out;
-        }
+/* BRANDS PAGE */
+.brands-grid { max-width: 1440px; margin: 0 auto; padding: 60px 48px 80px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.brand-card { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 30px 26px; transition: all 0.3s; aspect-ratio: 4/5; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.brand-card:hover { border-color: var(--vermillion); transform: translateY(-4px); box-shadow: var(--shadow); }
+.brand-card .bc-num { font-family: var(--display); font-style: italic; font-size: 13px; color: var(--vermillion); }
+.brand-card .bc-cjk { font-family: var(--cjk); font-size: 52px; line-height: 1; color: var(--paper-3, #ddd1ba); margin: 14px 0; font-weight: 700; }
+.brand-card h3 { font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 6px; }
+.brand-card .bc-origin { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; }
+.brand-card p { font-size: 13px; line-height: 1.55; color: var(--ink-soft); flex: 1; }
+.brand-card .bc-foot { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+.brand-card .bc-foot .arr { transition: transform 0.25s; font-size: 14px; font-style: normal; }
+.brand-card:hover .bc-foot .arr { transform: translateX(4px); color: var(--vermillion); }
+.brand-card.dark { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.brand-card.dark .bc-cjk { color: rgba(244,237,225,0.1); }
+.brand-card.dark p { color: rgba(244,237,225,0.7); }
+.brand-card.dark .bc-origin { color: rgba(244,237,225,0.55); }
+.brand-card.dark .bc-foot { border-color: rgba(244,237,225,0.2); color: rgba(244,237,225,0.6); }
+.brand-card.dark .bc-num { color: var(--gold); }
+.brand-card.red { background: var(--vermillion); color: var(--paper); border-color: var(--vermillion); }
+.brand-card.red .bc-cjk { color: rgba(244,237,225,0.15); }
+.brand-card.red p { color: rgba(244,237,225,0.85); }
+.brand-card.red .bc-origin { color: rgba(244,237,225,0.65); }
+.brand-card.red .bc-num { color: var(--paper); opacity: 0.7; }
+.brand-card.red .bc-foot { border-color: rgba(244,237,225,0.25); color: rgba(244,237,225,0.65); }
+.brand-card.gold-bg { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.brand-card.gold-bg .bc-cjk { color: rgba(21,33,47,0.1); }
+.brand-card.gold-bg .bc-num { color: var(--vermillion); }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* Page hero (inner pages) */
+.page-hero { max-width: 1440px; margin: 0 auto; padding: 64px 48px 48px; }
+.page-hero .breadcrumb { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 20px; }
+.page-hero .breadcrumb a { color: var(--vermillion); }
+.page-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(52px, 8vw, 110px); line-height: 0.94; letter-spacing: -0.03em; }
+.page-hero h1 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+.page-hero h1 .cjk-sm { font-family: var(--cjk); font-size: 0.5em; color: var(--ink-soft); margin-left: 0.15em; }
+.page-hero .lede { margin-top: 28px; max-width: 62ch; font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
 
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 16px 16px 0 0;
-            position: relative;
-        }
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .nav-inner { grid-template-columns: auto 1fr auto; padding: 16px 24px; }
+  .nav-links { display: none; }
+  section.editorial, .capabilities, .ecosystem, .heritage, .farm, .customers, .brand-wall, .app-section, .contact { padding-left: 24px; padding-right: 24px; }
+  .stats { padding: 40px 24px; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .story-grid, .cap-head, .cust-head, .heritage-head, .farm-inner, .app-inner, .contact-inner, .brand-wall-head { grid-template-columns: 1fr; gap: 40px; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .cap-1, .cap-2, .cap-3, .cap-4, .cap-5 { grid-column: span 1; }
+  .cap-5 { grid-template-columns: 1fr; }
+  .cap-5 .img-side { width: 100%; height: 200px; margin: 24px 0 -36px; }
+  .eco-flow { grid-template-columns: 1fr 1fr; }
+  .eco-flow::before { display: none; }
+  .cust-channels { grid-template-columns: 1fr 1fr; }
+  .timeline { grid-template-columns: repeat(3, 1fr); }
+  .foot-top { grid-template-columns: 1fr 1fr; }
+  .foot-bottom { grid-template-columns: 1fr; text-align: center; }
+  .foot-bottom .right { text-align: center; }
+  /* catalogue */
+  .cat-toolbar-inner { padding: 12px 24px; flex-wrap: wrap; }
+  .cat-search { min-width: 100%; }
+  .cat-mosaic { padding: 40px 24px 0; grid-template-columns: 1fr 1fr; }
+  .ct-lg, .ct-md, .ct-sm { grid-column: span 2; aspect-ratio: 16/9; }
+  .prod-section { padding: 60px 24px 30px; }
+  .prod-section-head { grid-template-columns: 1fr; gap: 16px; }
+  .prod-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .promo-band { padding: 60px 24px; }
+  .promo-band-inner { grid-template-columns: 1fr; gap: 32px; }
+  .brand-strip { padding: 32px 24px; }
+  .brand-strip-inner { grid-template-columns: 1fr; gap: 20px; }
+  .brands-grid { padding: 40px 24px; grid-template-columns: repeat(2, 1fr); }
+  .page-hero { padding: 40px 24px 36px; }
+}
+@media (max-width: 600px) {
+  .stats-inner { grid-template-columns: 1fr; }
+  .eco-flow { grid-template-columns: 1fr; }
+  .cust-channels { grid-template-columns: 1fr; }
+  .timeline { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .foot-top { grid-template-columns: 1fr; }
+  .prod-grid { grid-template-columns: 1fr; }
+  .brands-grid { grid-template-columns: 1fr; }
+}
 
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 28px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
+/* ============================================================
+   MOBILE NAV — Hamburger Menu
+   ============================================================ */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--ink);
+  padding: 4px 8px;
+  line-height: 1;
+}
 
-        .close-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: rotate(90deg);
-        }
+.nav-close {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--ink);
+  padding: 8px 0;
+  text-align: right;
+  align-self: flex-end;
+  margin-bottom: 8px;
+}
 
-        .modal-body {
-            padding: 30px;
-        }
+@media (max-width: 1100px) {
+  .nav-hamburger {
+    display: block;
+  }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+  .nav-inner {
+    grid-template-columns: 1fr auto auto;
+  }
 
-        label {
-            display: block;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
+  .nav-cta .phone {
+    display: none;
+  }
 
-        label .required {
-            color: #dc2626;
-        }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--paper);
+    z-index: 200;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px;
+    gap: 8px;
+  }
 
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border 0.2s;
-        }
+  .nav-links.open {
+    display: flex;
+  }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+  .nav-links a {
+    font-size: 28px;
+    font-family: var(--display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    padding: 12px 0;
+    width: 100%;
+    border-bottom: 1px solid var(--rule);
+  }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+  .nav-links a::after {
+    display: none;
+  }
 
-        .submit-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-        }
+  .nav-close {
+    display: block;
+  }
+}
 
-        .submit-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
+/* ============================================================
+   MOBILE HERO HEADLINE FIX
+   ============================================================ */
+@media (max-width: 600px) {
+  h1.headline {
+    font-size: clamp(48px, 13vw, 80px);
+  }
+}
 
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
+/* ===== CAROUSELS ===== */
+.carousel-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+}
+.carousel-landscape {
+  width: 100%;
+  aspect-ratio: 16/5;
+  max-height: 480px;
+}
+.carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(21,33,47,.6);
+  color: var(--paper);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  transition: background .2s;
+  backdrop-filter: blur(4px);
+}
+.carousel-btn:hover { background: var(--vermillion); }
+.carousel-prev { left: 20px; }
+.carousel-next { right: 20px; }
+.carousel-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+.c-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(244,237,225,.4);
+  border: none;
+  cursor: pointer;
+  transition: all .2s;
+  padding: 0;
+}
+.c-dot.active {
+  background: var(--paper);
+  width: 24px;
+  border-radius: 4px;
+}
 
-        .success-message {
-            background: #d1fae5;
-            border-left: 4px solid #10b981;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
+/* Poster carousel */
+.poster-carousel-section {
+  padding: 0;
+  background: var(--ink);
+}
+.poster-carousel-wrap {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.poster-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+  min-height: 420px;
+}
+.poster-slide {
+  flex: 0 0 20%;
+  aspect-ratio: 3/4;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--paper-2);
+  min-height: 380px;
+}
+.poster-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+.poster-next { right: 12px; top: 50%; transform: translateY(-50%); }
 
-        .success-message.show {
-            display: block;
-        }
+/* App image */
+.app-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-visual-img {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4/3;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
+@media(max-width:1100px) {
+  .carousel-landscape { aspect-ratio: 16/7; }
+  .poster-slide { flex: 0 0 50%; }
+}
+@media(max-width:600px) {
+  .poster-slide { flex: 0 0 100%; }
+  .carousel-btn { width: 36px; height: 36px; font-size: 18px; }
+}
 
-        @media (max-width: 768px) {
-            .calendar-grid {
-                font-size: 11px;
-            }
+/* ===== THAI LANGUAGE SUPPORT ===== */
+:lang(th), .thai {
+  font-family: 'Sarabun', var(--body);
+  font-size: 1.05em;
+  line-height: 1.8;
+}
 
-            .time-slot {
-                padding: 10px 5px;
-                min-height: 50px;
-            }
+/* ===== THAI DECORATIVE TEXT ===== */
+.thai-deco {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.55em;
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  margin-left: 10px;
+  vertical-align: middle;
+  opacity: 0.75;
+}
+.thai-deco-sm {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.7em;
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  margin-left: 8px;
+  vertical-align: middle;
+  opacity: 0.75;
+}
+.thai-char {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.85em;
+  color: var(--gold);
+  margin-left: 4px;
+  opacity: 0.8;
+}
+.thai {
+  font-family: 'Sarabun', sans-serif;
+}
 
-            h1 {
-                font-size: 24px;
-            }
-        }
-    </style>
+/* Brand card Thai text */
+.bc-cjk {
+  position: relative;
+}
+.bc-thai {
+  display: block;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--gold);
+  opacity: 0.65;
+  letter-spacing: 0.02em;
+  margin-top: -8px;
+  line-height: 1.2;
+}
+
+/* Decorative block Thai (promo band) */
+.thai-deco-block {
+  display: block;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.35em;
+  font-weight: 300;
+  color: rgba(244,237,225,0.06);
+  letter-spacing: 0.1em;
+  line-height: 1;
+  margin-top: -0.2em;
+}
+
+/* Poster placeholder slots */
+.poster-empty {
+  background: var(--paper-2);
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.poster-empty::after {
+  content: 'Upload poster image in CMS';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--body);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.3;
+  padding: 16px;
+  text-align: center;
+}
+
+    /* ====================================================
+       BOOKING PAGE
+    ==================================================== */
+
+    .book-hero {
+      padding: 140px 48px 64px;
+      text-align: center;
+    }
+    .book-hero .eyebrow { justify-content: center; }
+    .book-hero h1 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(36px, 5vw, 68px);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      max-width: 18ch;
+      margin: 0 auto 20px;
+    }
+    .book-hero h1 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+    .book-hero .lede {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      max-width: 52ch;
+      margin: 0 auto;
+    }
+
+    /* Info strip */
+    .book-info-strip {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 28px 48px;
+    }
+    .book-info-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .bii {
+      padding: 0 32px;
+      border-left: 1px solid rgba(244,237,225,0.15);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .bii:first-child { border-left: none; padding-left: 0; }
+    .bii-icon { font-size: 22px; flex-shrink: 0; }
+    .bii-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+    .bii-text span {
+      font-size: 12px;
+      color: rgba(244,237,225,0.6);
+    }
+
+    /* Week selector */
+    .week-bar {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 48px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .week-bar h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(22px, 2.5vw, 34px);
+      letter-spacing: -0.02em;
+    }
+    .week-bar h2 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+    .week-nav-btns { display: flex; gap: 10px; }
+    .wk-btn {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 11px 22px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.25s;
+    }
+    .wk-btn:hover { background: var(--vermillion); transform: translateY(-1px); }
+    .wk-btn:disabled { background: rgba(21,33,47,0.2); color: rgba(21,33,47,0.4); cursor: not-allowed; transform: none; }
+    .wk-btn.ghost {
+      background: transparent;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+    }
+    .wk-btn.ghost:hover { background: var(--ink); color: var(--paper); }
+    .wk-btn.ghost:disabled { border-color: rgba(21,33,47,0.2); color: rgba(21,33,47,0.3); background: transparent; }
+
+    /* Calendar */
+    .calendar-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 48px 80px;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: 72px repeat(5, 1fr);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--rule);
+      gap: 1px;
+    }
+    .cal-corner { background: var(--paper-2); }
+    .cal-day-hdr {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 18px 12px;
+      text-align: center;
+    }
+    .cal-day-hdr .dh-name {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      display: block;
+    }
+    .cal-day-hdr .dh-date {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(244,237,225,0.55);
+      margin-top: 4px;
+      display: block;
+    }
+    .cal-time {
+      background: var(--paper-2);
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      min-height: 58px;
+    }
+    .cal-slot {
+      background: var(--paper);
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 0.18s;
+      position: relative;
+    }
+    .cal-slot.available { cursor: pointer; color: #065f46; }
+    .cal-slot.available::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: #d1fae5;
+      border-radius: 2px;
+      z-index: 0;
+      transition: background 0.18s;
+    }
+    .cal-slot.available:hover::before { background: #6ee7b7; }
+    .cal-slot.one-left { cursor: pointer; color: #92400e; }
+    .cal-slot.one-left::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: #fef3c7;
+      border-radius: 2px;
+      z-index: 0;
+      transition: background 0.18s;
+    }
+    .cal-slot.one-left:hover::before { background: #fde68a; }
+    .cal-slot.booked { color: #991b1b; }
+    .cal-slot.booked::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: #fee2e2;
+      border-radius: 2px;
+      z-index: 0;
+    }
+    .cal-slot.blocked { background: var(--paper-2); color: rgba(21,33,47,0.25); }
+    .cal-slot.past { color: rgba(21,33,47,0.2); }
+    .cal-slot span { position: relative; z-index: 1; }
+
+    .cal-loading {
+      grid-column: 1 / -1;
+      padding: 64px;
+      text-align: center;
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--ink-soft);
+      background: var(--paper);
+    }
+
+    .cal-legend {
+      display: flex;
+      gap: 24px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .cl-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      letter-spacing: 0.04em;
+    }
+    .cl-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(21,33,47,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-card {
+      background: var(--paper);
+      border-radius: 4px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 40px 80px -20px rgba(21,33,47,0.5);
+      animation: slideUp 0.3s cubic-bezier(0.2,0.7,0.2,1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .modal-hdr {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 32px 36px;
+      position: relative;
+    }
+    .modal-hdr .eyebrow { color: rgba(244,237,225,0.55); margin-bottom: 10px; }
+    .modal-hdr .eyebrow::before { color: var(--vermillion); }
+    .modal-hdr h2 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .modal-hdr h2 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+    .modal-hdr .modal-slot-label {
+      margin-top: 8px;
+      font-size: 13px;
+      color: rgba(244,237,225,0.6);
+      letter-spacing: 0.06em;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(244,237,225,0.1);
+      border: 1px solid rgba(244,237,225,0.18);
+      color: var(--paper);
+      font-size: 16px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--vermillion); border-color: var(--vermillion); }
+    .modal-body { padding: 36px; }
+    .form-row { margin-bottom: 22px; }
+    .form-row label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .form-row label .req { color: var(--vermillion); }
+    .form-row input,
+    .form-row textarea {
+      width: 100%;
+      padding: 11px 0;
+      border: none;
+      border-bottom: 1.5px solid var(--rule);
+      background: transparent;
+      font-family: var(--body);
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-row input:focus,
+    .form-row textarea:focus { border-bottom-color: var(--vermillion); }
+    .form-row textarea { resize: vertical; min-height: 72px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+    .form-submit {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 18px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: background 0.25s;
+      margin-top: 6px;
+    }
+    .form-submit:hover { background: var(--vermillion); }
+    .form-submit:disabled { background: rgba(21,33,47,0.28); cursor: not-allowed; }
+
+    /* Success */
+    .booking-success { display: none; text-align: center; padding: 52px 36px; }
+    .booking-success.show { display: block; }
+    .bs-icon {
+      width: 60px; height: 60px;
+      background: #2f4a3a;
+      color: var(--paper);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 26px;
+      margin: 0 auto 24px;
+    }
+    .booking-success h3 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .booking-success p { font-size: 15px; color: var(--ink-soft); line-height: 1.6; }
+
+    /* CTA band */
+    .book-cta-band {
+      background: var(--paper-2);
+      border-top: 1px solid var(--rule);
+      padding: 64px 48px;
+    }
+    .bcb-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 40px;
+    }
+    .bcb-inner h3 {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(24px, 3vw, 40px);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .bcb-inner h3 em { font-style: italic; color: var(--vermillion); font-weight: 300; }
+    .bcb-inner p { margin-top: 10px; font-size: 15px; color: var(--ink-soft); max-width: 48ch; }
+    .bcb-btns { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .book-hero { padding: 120px 24px 48px; }
+      .book-info-strip { padding: 24px; }
+      .book-info-inner { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .bii { border-left: none; padding-left: 0; }
+      .week-bar { padding: 28px 24px 0; flex-wrap: wrap; }
+      .calendar-section { padding: 24px 24px 60px; }
+      .book-cta-band { padding: 48px 24px; }
+      .bcb-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .cal-grid { grid-template-columns: 46px repeat(5, 1fr); }
+      .cal-time { font-size: 9px; padding: 0 4px; min-height: 48px; }
+      .cal-day-hdr { padding: 12px 4px; }
+      .cal-day-hdr .dh-name { font-size: 11px; }
+      .cal-day-hdr .dh-date { font-size: 9px; }
+      .cal-slot { min-height: 48px; font-size: 9px; }
+      .form-grid-2 { grid-template-columns: 1fr; gap: 0; }
+      .modal-hdr { padding: 24px 20px; }
+      .modal-body { padding: 24px 20px; }
+      .book-info-inner { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚛 Chuanglee Warehouse Delivery Booking</h1>
-            <p class="subtitle">Select an available time slot to book your delivery</p>
-        </div>
 
-        <div class="info-box">
-            <strong>⏰ Booking Window:</strong> You can book up to 2 hours in advance. Slots within 2 hours cannot be booked.<br>
-            <strong>📅 Delivery Times:</strong> Monday - Friday, 9:00 AM - 3:00 PM (30-minute slots)
-        </div>
-
-        <div class="calendar-wrapper">
-            <div class="week-selector">
-                <h2 id="weekRange">Loading...</h2>
-                <div class="week-nav">
-                    <button class="nav-btn" onclick="changeWeek(-1)" id="prevBtn">← Previous Week</button>
-                    <button class="nav-btn" onclick="changeWeek(0)">This Week</button>
-                    <button class="nav-btn" onclick="changeWeek(1)">Next Week →</button>
-                </div>
-            </div>
-
-            <div class="calendar-grid" id="calendar">
-                <div class="loading">Loading available slots...</div>
-            </div>
-
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #d1fae5;"></div>
-                    <span>Available</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #fef3c7;"></div>
-                    <span>1 Slot Left</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #fee2e2;"></div>
-                    <span>Booked</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #f3f4f6;"></div>
-                    <span>Blocked</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #f9fafb;"></div>
-                    <span>Past</span>
-                </div>
-            </div>
-        </div>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="marquee">
+      <span><span class="dot"></span> Family-run since 1989</span>
+      <span><span class="dot"></span> Importer · Manufacturing Partner · Foodservice Distributor</span>
+      <span><span class="dot"></span> Direct from farm to kitchen</span>
+      <span><span class="dot"></span> Serving 450+ UK food businesses</span>
+      <span><span class="dot"></span> Nationwide distribution · Own London fleet</span>
+      <span><span class="dot"></span> Family-run since 1989</span>
+      <span><span class="dot"></span> Importer · Manufacturing Partner · Foodservice Distributor</span>
+      <span><span class="dot"></span> Direct from farm to kitchen</span>
+      <span><span class="dot"></span> Serving 450+ UK food businesses</span>
+      <span><span class="dot"></span> Nationwide distribution · Own London fleet</span>
     </div>
+  </div>
 
-    <div class="modal" id="bookingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close-btn" onclick="closeModal()">×</button>
-                <h2 id="modalTitle">Book Delivery Slot</h2>
-                <p id="modalSubtitle"></p>
-            </div>
-            <div class="modal-body">
-                <form id="bookingForm" onsubmit="submitBooking(event)">
-                    <div class="form-group">
-                        <label>Company Name <span class="required">*</span></label>
-                        <input type="text" id="companyName" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Contact Person <span class="required">*</span></label>
-                        <input type="text" id="contactPerson" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phone Number <span class="required">*</span></label>
-                        <input type="tel" id="phone" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email Address <span class="required">*</span></label>
-                        <input type="email" id="email" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Number of Pallets <span class="required">*</span></label>
-                        <input type="number" id="pallets" min="1" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Reference Number (PO, Container, etc.)</label>
-                        <input type="text" id="reference">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Special Notes</label>
-                        <textarea id="notes" placeholder="Any special requirements or notes..."></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="submitBtn">Confirm Booking</button>
-
-                    <div class="success-message" id="successMessage">
-                        ✅ <strong>Booking Confirmed!</strong><br>
-                        You will receive a confirmation email shortly.
-                    </div>
-                </form>
-            </div>
-        </div>
+  <!-- NAV -->
+  <nav class="main"><div class="nav-inner">
+    <a href="index.html" class="brand">
+      <img src="images/Logo Design Chuanglee_FINAL (1).png" alt="Chuanglee"
+           onerror="this.style.display='none'" />
+      <div class="brand-name">Chuanglee<span>Est. 1989</span></div>
+    </a>
+    <button class="nav-hamburger" onclick="toggleNav()" aria-label="Menu">☰</button>
+    <div class="nav-links">
+      <button class="nav-close" onclick="toggleNav()">✕</button>
+      <a href="index.html">Home</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="brands.html">Brands</a>
+      <a href="farm.html">The Farm</a>
+      <a href="delivery.html">Delivery</a>
+      <a href="contact.html">Contact</a>
     </div>
+    <div class="nav-cta">
+      <span class="phone">0845 388 1688</span>
+      <a href="https://chuanglee.choco.com/" target="_blank" class="order-btn">Order Online ↗</a>
+    </div>
+  </div></nav>
 
-    <script>
-        // CONFIGURATION
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwysJLvZtCw11jeMzswzrJnTLLJTVOddTM29FwPIZH5zkOh3TyDnYkyv7gB9MPNtn253w/exec';
-        
-        // Time slots configuration
-        const START_HOUR = 9;
-        const END_HOUR = 15; // 3 PM
-        const SLOT_DURATION = 30; // minutes
-        const ADVANCE_BOOKING_HOURS = 2;
+  <!-- HERO -->
+  <section class="book-hero">
+    <div class="eyebrow">Warehouse Operations</div>
+    <h1>Book a <em>delivery</em> slot</h1>
+    <p class="lede">Select an available time slot to schedule your warehouse delivery. Monday to Friday, 9:00 AM – 3:00 PM in 30-minute slots.</p>
+  </section>
 
-        let currentWeekStart = new Date();
-        let bookings = [];
-        let blockedSlots = [];
-        let selectedSlot = null;
+  <!-- INFO STRIP -->
+  <div class="book-info-strip">
+    <div class="book-info-inner">
+      <div class="bii">
+        <div class="bii-icon">🕘</div>
+        <div class="bii-text"><strong>Operating Hours</strong><span>Mon – Fri, 09:00 – 15:00</span></div>
+      </div>
+      <div class="bii">
+        <div class="bii-icon">📦</div>
+        <div class="bii-text"><strong>Slot Capacity</strong><span>Max 2 deliveries · 6+ pallets = full slot</span></div>
+      </div>
+      <div class="bii">
+        <div class="bii-icon">⏱</div>
+        <div class="bii-text"><strong>Advance Notice</strong><span>Minimum 2 hours prior</span></div>
+      </div>
+      <div class="bii">
+        <div class="bii-icon">📞</div>
+        <div class="bii-text"><strong>Questions?</strong><span>0845 388 1688</span></div>
+      </div>
+    </div>
+  </div>
 
-        // Initialize
+  <!-- WEEK BAR -->
+  <div class="week-bar">
+    <h2 id="weekRange">Loading<em>…</em></h2>
+    <div class="week-nav-btns">
+      <button class="wk-btn ghost" onclick="changeWeek(-1)" id="prevBtn">← Prev week</button>
+      <button class="wk-btn ghost" onclick="changeWeek(0)">This week</button>
+      <button class="wk-btn" onclick="changeWeek(1)">Next week →</button>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="calendar-section">
+    <div class="cal-grid" id="calendar">
+      <div class="cal-loading">Loading available slots…</div>
+    </div>
+    <div class="cal-legend">
+      <div class="cl-item"><div class="cl-swatch" style="background:#d1fae5;border:1px solid #a7f3d0;"></div>Available</div>
+      <div class="cl-item"><div class="cl-swatch" style="background:#fef3c7;border:1px solid #fde68a;"></div>1 slot left</div>
+      <div class="cl-item"><div class="cl-swatch" style="background:#fee2e2;border:1px solid #fecaca;"></div>Fully booked</div>
+      <div class="cl-item"><div class="cl-swatch" style="background:#ebe2d2;border:1px solid rgba(21,33,47,0.18);"></div>Blocked</div>
+      <div class="cl-item"><div class="cl-swatch" style="background:#f4ede1;border:1px solid rgba(21,33,47,0.18);opacity:0.5;"></div>Past</div>
+    </div>
+  </div>
+
+  <!-- CTA BAND -->
+  <div class="book-cta-band">
+    <div class="bcb-inner">
+      <div>
+        <h3>Need to open a <em>trade account</em>?</h3>
+        <p>Get access to our full 2,700+ product range with dedicated account management and credit terms available.</p>
+      </div>
+      <div class="bcb-btns">
+        <a href="contact.html" class="btn-primary">Open an Account →</a>
+        <a href="https://chuanglee.choco.com/" target="_blank" class="btn-ghost">Order Online <span class="arrow">↗</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="brand">
+          <img src="images/Logo Design Chuanglee_FINAL (1).png" alt="Chuanglee"
+               style="filter:brightness(0) invert(1);" onerror="this.style.display='none'" />
+          <div class="brand-name">Chuanglee<span>Est. 1989</span></div>
+        </div>
+        <p>Family-run UK importer, manufacturing partner and foodservice distributor — bringing authentic East Asian ingredients from soil to stove since 1989.</p>
+      </div>
+      <div class="foot-col"><h5>Explore</h5><ul>
+        <li><a href="catalogue.html">Catalogue</a></li>
+        <li><a href="brands.html">Our Brands</a></li>
+        <li><a href="farm.html">Suree's Farm</a></li>
+        <li><a href="delivery.html">Delivery</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Trade</h5><ul>
+        <li><a href="https://chuanglee.choco.com/" target="_blank">Order Online</a></li>
+        <li><a href="contact.html">Open Account</a></li>
+        <li><a href="contact.html">Bespoke Manufacturing</a></li>
+      </ul></div>
+      <div class="foot-col"><h5>Contact</h5><ul>
+        <li><a href="mailto:sales@chuanglee.co.uk">sales@chuanglee.co.uk</a></li>
+        <li><a href="tel:08453881688">0845 388 1688</a></li>
+        <li>Unit 7-9 Meridian Trading Estate</li>
+        <li>Bugsby Way, London SE7 7SJ</li>
+      </ul></div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 1989–2025 Chuanglee Limited. All rights reserved.</div>
+      <div class="center">創立 一九八九 &nbsp;·&nbsp; <span class="thai">ก่อตั้ง ๑๙๘๙</span></div>
+      <div class="right"><a href="#">Modern Slavery</a><a href="#">Terms &amp; Conditions</a><a href="#">Privacy</a></div>
+    </div>
+  </div></footer>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-card">
+      <div class="modal-hdr">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="eyebrow">Confirm Booking</div>
+        <h2>Book <em>delivery</em> slot</h2>
+        <p class="modal-slot-label" id="modalSubtitle"></p>
+      </div>
+      <div class="modal-body">
+        <div class="booking-success" id="successMessage">
+          <div class="bs-icon">✓</div>
+          <h3>Booking confirmed</h3>
+          <p>Your delivery slot has been reserved.<br>You'll receive a confirmation shortly.</p>
+        </div>
+        <form id="bookingForm" onsubmit="submitBooking(event)">
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Company Name <span class="req">*</span></label>
+              <input type="text" id="companyName" required />
+            </div>
+            <div class="form-row">
+              <label>Contact Person <span class="req">*</span></label>
+              <input type="text" id="contactPerson" required />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Phone Number <span class="req">*</span></label>
+              <input type="tel" id="phone" required />
+            </div>
+            <div class="form-row">
+              <label>Email Address <span class="req">*</span></label>
+              <input type="email" id="email" required />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Number of Pallets <span class="req">*</span></label>
+              <input type="number" id="pallets" min="1" required />
+            </div>
+            <div class="form-row">
+              <label>Reference (PO / Container)</label>
+              <input type="text" id="reference" />
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Special Notes</label>
+            <textarea id="notes" placeholder="Any special requirements or notes…"></textarea>
+          </div>
+          <button type="submit" class="form-submit" id="submitBtn">Confirm Booking</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Mobile nav ──────────────────────────────────────────────
+    function toggleNav() {
+      const nav = document.querySelector('.nav-links');
+      if (nav) nav.classList.toggle('open');
+      document.body.style.overflow = nav && nav.classList.contains('open') ? 'hidden' : '';
+    }
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        const nav = document.querySelector('.nav-links');
+        if (nav) nav.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // ── Scroll reveal ───────────────────────────────────────────
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => { el.classList.add('reveal'); io.observe(el); });
+
+    // ============================================================
+    //  CONFIGURATION
+    // ============================================================
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwysJLvZtCw11jeMzswzrJnTLLJTVOddTM29FwPIZH5zkOh3TyDnYkyv7gB9MPNtn253w/exec';
+    const START_HOUR = 9;
+    const END_HOUR = 15;
+    const ADVANCE_BOOKING_HOURS = 2;
+
+    let currentWeekStart = new Date();
+    let bookings = [];
+    let blockedSlots = [];
+    let selectedSlot = null;
+
+    setMondayOfWeek(currentWeekStart, 0);
+    loadData();
+
+    // ── Week helpers ─────────────────────────────────────────────
+    function setMondayOfWeek(date, weekOffset) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const day = today.getDay();
+      const diff = day === 0 ? -6 : 1 - day;
+      date.setTime(today.getTime());
+      date.setDate(today.getDate() + diff + (weekOffset * 7));
+    }
+
+    function changeWeek(offset) {
+      if (offset === 0) {
+        currentWeekStart = new Date();
         setMondayOfWeek(currentWeekStart, 0);
-        loadData();
+      } else {
+        currentWeekStart.setDate(currentWeekStart.getDate() + (offset * 7));
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      document.getElementById('prevBtn').disabled = currentWeekStart <= today;
+      renderCalendar();
+    }
 
-        function setMondayOfWeek(date, weekOffset) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const day = today.getDay();
-            const diff = day === 0 ? -6 : 1 - day; // Adjust to Monday
-            
-            date.setTime(today.getTime());
-            date.setDate(today.getDate() + diff + (weekOffset * 7));
+    // ── Data loading ─────────────────────────────────────────────
+    async function loadData() {
+      try {
+        const [bRes, blRes] = await Promise.all([
+          fetch(`${APPS_SCRIPT_URL}?action=getBookings`),
+          fetch(`${APPS_SCRIPT_URL}?action=getBlockedSlots`)
+        ]);
+        bookings = await bRes.json();
+        blockedSlots = await blRes.json();
+      } catch (e) {
+        console.error('Error loading data:', e);
+      }
+      renderCalendar();
+    }
+
+    // ── Slot logic ───────────────────────────────────────────────
+    function getSlotInfo(date, time) {
+      const [y, m, d] = date.split('-').map(Number);
+      const [hh, mm] = time.split(':').map(Number);
+      const slotDateTime = new Date(y, m - 1, d, hh, mm, 0);
+      const twoHoursFromNow = new Date(Date.now() + ADVANCE_BOOKING_HOURS * 3600000);
+
+      if (slotDateTime < twoHoursFromNow) return { status: 'past', spotsLeft: 0 };
+
+      const isBlocked = blockedSlots.some(s => s.date === date && s.time === time);
+      if (isBlocked) return { status: 'blocked', spotsLeft: 0 };
+
+      const slotBookings = bookings.filter(b => b.date === date && b.time === time);
+      const hasLargeDelivery = slotBookings.some(b => parseInt(b.pallets, 10) > 6);
+      if (hasLargeDelivery) return { status: 'booked', spotsLeft: 0 };
+
+      const spotsLeft = 2 - slotBookings.length;
+      if (spotsLeft <= 0) return { status: 'booked', spotsLeft: 0 };
+
+      return { status: 'available', spotsLeft };
+    }
+
+    function generateTimeSlots() {
+      const slots = [];
+      for (let hour = START_HOUR; hour < END_HOUR; hour++) {
+        slots.push(`${String(hour).padStart(2, '0')}:00`);
+        slots.push(`${String(hour).padStart(2, '0')}:30`);
+      }
+      return slots;
+    }
+
+    // ── Render calendar ──────────────────────────────────────────
+    function renderCalendar() {
+      const endDate = new Date(currentWeekStart);
+      endDate.setDate(endDate.getDate() + 4);
+      const wkStart = currentWeekStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const wkEnd   = endDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      document.getElementById('weekRange').innerHTML = `Week of ${wkStart} – <em>${wkEnd}</em>`;
+
+      let html = '<div class="cal-corner"></div>';
+      for (let day = 0; day < 5; day++) {
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + day);
+        const dayName = date.toLocaleDateString('en-GB', { weekday: 'short' });
+        const dayDate = date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+        html += `<div class="cal-day-hdr"><span class="dh-name">${dayName}</span><span class="dh-date">${dayDate}</span></div>`;
+      }
+      generateTimeSlots().forEach(time => {
+        html += `<div class="cal-time">${time}</div>`;
+        for (let day = 0; day < 5; day++) {
+          const date = new Date(currentWeekStart);
+          date.setDate(date.getDate() + day);
+          const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+          const { status, spotsLeft } = getSlotInfo(dateStr, time);
+          const isOneLeft = status === 'available' && spotsLeft === 1;
+          const cls = `cal-slot ${status}${isOneLeft ? ' one-left' : ''}`;
+          if (status === 'available') {
+            html += `<div class="${cls}" onclick='openBookingModal("${dateStr}","${time}")'><span>${isOneLeft ? '1 left' : 'Available'}</span></div>`;
+          } else if (status === 'booked') {
+            html += `<div class="${cls}"><span>Booked</span></div>`;
+          } else if (status === 'blocked') {
+            html += `<div class="${cls}"><span>Blocked</span></div>`;
+          } else {
+            html += `<div class="${cls}"><span>—</span></div>`;
+          }
         }
+      });
+      document.getElementById('calendar').innerHTML = html;
+    }
 
-        async function loadData() {
-            try {
-                // Load bookings from Google Sheets
-                const bookingsResponse = await fetch(`${APPS_SCRIPT_URL}?action=getBookings`);
-                bookings = await bookingsResponse.json();
+    // ── Modal ────────────────────────────────────────────────────
+    function openBookingModal(date, time) {
+      const { status } = getSlotInfo(date, time);
+      if (status !== 'available') return;
+      selectedSlot = { date, time };
+      const [year, month, day] = date.split('-').map(Number);
+      const dateObj = new Date(year, month - 1, day);
+      const formatted = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('modalSubtitle').textContent = `${formatted} at ${time}`;
+      document.getElementById('bookingModal').classList.add('active');
+      document.getElementById('successMessage').classList.remove('show');
+      document.getElementById('bookingForm').style.display = '';
+      document.getElementById('bookingForm').reset();
+    }
 
-                // Load blocked slots
-                const blockedResponse = await fetch(`${APPS_SCRIPT_URL}?action=getBlockedSlots`);
-                blockedSlots = await blockedResponse.json();
+    function closeModal() {
+      document.getElementById('bookingModal').classList.remove('active');
+      selectedSlot = null;
+    }
 
-                console.log('Loaded bookings:', bookings.length);
-                console.log('Loaded blocked slots:', blockedSlots.length);
+    document.getElementById('bookingModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
 
-                renderCalendar();
-            } catch (error) {
-                console.error('Error loading data:', error);
-                renderCalendar(); // Render anyway with empty data
-            }
-        }
+    // ── Submit ───────────────────────────────────────────────────
+    async function submitBooking(event) {
+      event.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
 
-        function changeWeek(offset) {
-            if (offset === 0) {
-                currentWeekStart = new Date();
-                setMondayOfWeek(currentWeekStart, 0);
-            } else {
-                currentWeekStart.setDate(currentWeekStart.getDate() + (offset * 7));
-            }
-            
-            // Disable previous week button if trying to go to past
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            document.getElementById('prevBtn').disabled = currentWeekStart < today;
-            
-            renderCalendar();
-        }
-
-        function renderCalendar() {
-            const endDate = new Date(currentWeekStart);
-            endDate.setDate(endDate.getDate() + 4); // Friday
-            
-            document.getElementById('weekRange').textContent = 
-                `Week of ${formatDate(currentWeekStart)} - ${formatDate(endDate)}`;
-
-            let html = '';
-            
-            // Header row - times
-            html += '<div class="time-label"></div>'; // Top-left corner
-            
-            for (let day = 0; day < 5; day++) {
-                const date = new Date(currentWeekStart);
-                date.setDate(date.getDate() + day);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dayDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                html += `<div class="day-header">${dayName}<br>${dayDate}</div>`;
-            }
-
-            // Time slots
-            const slots = generateTimeSlots();
-            
-            slots.forEach(time => {
-                html += `<div class="time-label">${time}</div>`;
-                
-                for (let day = 0; day < 5; day++) {
-                    const date = new Date(currentWeekStart);
-                    date.setDate(date.getDate() + day);
-                    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                    
-                    const { status, spotsLeft } = getSlotInfo(dateStr, time);
-                    const className = `time-slot ${status}${status === 'available' && spotsLeft === 1 ? ' one-left' : ''}`;
-
-                    if (status === 'available') {
-                        const label = spotsLeft === 1 ? '1 slot left' : 'Available';
-                        html += `<div class="${className}" onclick='openBookingModal("${dateStr}", "${time}")'>${label}</div>`;
-                    } else if (status === 'booked') {
-                        html += `<div class="${className}">Booked</div>`;
-                    } else if (status === 'blocked') {
-                        html += `<div class="${className}">Blocked</div>`;
-                    } else {
-                        html += `<div class="${className}">Past</div>`;
-                    }
-                }
-            });
-
-            document.getElementById('calendar').innerHTML = html;
-        }
-
-        function generateTimeSlots() {
-            const slots = [];
-            for (let hour = START_HOUR; hour < END_HOUR; hour++) {
-                slots.push(`${hour.toString().padStart(2, '0')}:00`);
-                slots.push(`${hour.toString().padStart(2, '0')}:30`);
-            }
-            return slots;
-        }
-
-        function getSlotInfo(date, time) {
-            const [y, m, d] = date.split('-').map(Number);
-            const [hh, mm] = time.split(':').map(Number);
-            const slotDateTime = new Date(y, m - 1, d, hh, mm, 0);
-            const now = new Date();
-            const twoHoursFromNow = new Date(now.getTime() + (ADVANCE_BOOKING_HOURS * 60 * 60 * 1000));
-
-            if (slotDateTime < twoHoursFromNow) return { status: 'past', spotsLeft: 0 };
-
-            const isBlocked = blockedSlots.some(slot => slot.date === date && slot.time === time);
-            if (isBlocked) return { status: 'blocked', spotsLeft: 0 };
-
-            const slotBookings = bookings.filter(b => b.date === date && b.time === time);
-            const hasLargeDelivery = slotBookings.some(b => parseInt(b.pallets, 10) > 6);
-            if (hasLargeDelivery) return { status: 'booked', spotsLeft: 0 };
-
-            const spotsLeft = 2 - slotBookings.length;
-            if (spotsLeft <= 0) return { status: 'booked', spotsLeft: 0 };
-
-            return { status: 'available', spotsLeft };
-        }
-
-        function getSlotStatus(date, time) {
-            const [y, m, d] = date.split('-').map(Number);
-            const [hh, mm] = time.split(':').map(Number);
-            const slotDateTime = new Date(y, m - 1, d, hh, mm, 0);
-            const now = new Date();
-            const twoHoursFromNow = new Date(now.getTime() + (ADVANCE_BOOKING_HOURS * 60 * 60 * 1000));
-
-            // Past or within 2 hours
-            if (slotDateTime < twoHoursFromNow) {
-                return 'past';
-            }
-
-            // Check if blocked
-            const isBlocked = blockedSlots.some(slot => 
-                slot.date === date && slot.time === time
-            );
-            if (isBlocked) return 'blocked';
-
-            // Check if booked
-            const isBooked = bookings.some(booking => 
-                booking.date === date && booking.time === time
-            );
-            if (isBooked) return 'booked';
-
-            return 'available';
-        }
-
-        function openBookingModal(date, time) {
-            const { status } = getSlotInfo(date, time);
-            if (status !== 'available') return; // slot filled since last render
-
-            selectedSlot = { date, time };
-            
-            const [year, month, day] = date.split('-').map(Number);
-            const dateObj = new Date(year, month - 1, day);
-            const formattedDate = dateObj.toLocaleDateString('en-GB', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
-            });
-            
-            document.getElementById('modalTitle').textContent = 'Book Delivery Slot';
-            document.getElementById('modalSubtitle').textContent = `${formattedDate} at ${time}`;
-            document.getElementById('bookingModal').classList.add('active');
-            document.getElementById('successMessage').classList.remove('show');
-            document.getElementById('bookingForm').reset();
-        }
-
-        function closeModal() {
-            document.getElementById('bookingModal').classList.remove('active');
-            selectedSlot = null;
-        }
-
-        async function submitBooking(event) {
-    event.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
-
-    // Build URL parameters instead of POST body
-    const params = new URLSearchParams({
+      const params = new URLSearchParams({
         action: 'createBooking',
         date: selectedSlot.date,
         time: selectedSlot.time,
@@ -700,50 +2001,27 @@
         pallets: document.getElementById('pallets').value,
         reference: document.getElementById('reference').value,
         notes: document.getElementById('notes').value
-    });
+      });
 
-    try {
-        console.log('Submitting booking...');
-        
-        // Use GET request with URL parameters
-        const response = await fetch(`${APPS_SCRIPT_URL}?${params}`);
-        const result = await response.json();
-        
-        console.log('Booking result:', result);
-        
-        // Show success message
-        document.getElementById('successMessage').classList.add('show');
-        document.getElementById('bookingForm').style.display = 'none';
-        
-        // Reload calendar after 3 seconds
-        setTimeout(() => {
-            closeModal();
-            loadData();
-            document.getElementById('bookingForm').style.display = 'block';
-        }, 3000);
-        
-    } catch (error) {
-        console.error('Booking error:', error);
-        // Show success anyway since request was sent
-        document.getElementById('successMessage').classList.add('show');
-        document.getElementById('bookingForm').style.display = 'none';
-        
-        setTimeout(() => {
-            closeModal();
-            loadData();
-            document.getElementById('bookingForm').style.display = 'block';
-        }, 3000);
-        
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirm Booking';
+      try {
+        await fetch(`${APPS_SCRIPT_URL}?${params}`);
+      } catch (e) {
+        console.error('Booking error:', e);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Confirm Booking';
+      }
+
+      document.getElementById('successMessage').classList.add('show');
+      document.getElementById('bookingForm').style.display = 'none';
+
+      setTimeout(() => {
+        closeModal();
+        loadData();
+        document.getElementById('bookingForm').style.display = '';
+      }, 3000);
     }
-}
-
-        function formatDate(date) {
-            return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-    </script>
+  </script>
 </body>
 </html>
 
